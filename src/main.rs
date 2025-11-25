@@ -41,11 +41,11 @@ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32]> {
     let mut key = [0u8; 32];
     // Argon2id params: moderate-ish cost; tune as needed
     let params = Params::new(65536, 3, 1, Some(32)) // memory_kib, iterations, parallelism, output_size
-        .context("invalid argon2 params")?;
+        .map_err(|e| anyhow!("invalid argon2 params: {:?}", e))?;
     let argon2 = Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, params);
     argon2
         .hash_password_into(password.as_bytes(), salt, &mut key)
-        .context("argon2 derive failed")?;
+        .map_err(|e| anyhow!("argon2 derive failed: {:?}", e))?;
     Ok(key)
 }
 
@@ -62,7 +62,7 @@ fn encrypt_text(password: &str, plaintext: &[u8]) -> Result<String> {
     let nonce_gcm = Nonce::from_slice(&nonce);
     let ciphertext = cipher
         .encrypt(nonce_gcm, Payload { msg: plaintext, aad: &[] })
-        .context("encryption failed")?;
+        .map_err(|e| anyhow!("encryption failed: {:?}", e))?;
 
     // wipe key material
     let mut key_zero = key_bytes;
@@ -99,7 +99,7 @@ fn decrypt_text(password: &str, armored: &str) -> Result<Vec<u8>> {
     let nonce_gcm = Nonce::from_slice(nonce);
     let plaintext = cipher
         .decrypt(nonce_gcm, Payload { msg: ciphertext, aad: &[] })
-        .context("decryption failed (bad password or corrupt)" )?;
+        .map_err(|_| anyhow!("decryption failed (bad password or corrupt data)"))?;
 
     // wipe
     let mut key_zero = key_bytes;
