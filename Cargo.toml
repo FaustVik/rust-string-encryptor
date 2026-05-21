@@ -5,8 +5,6 @@ edition = "2021"
 
 
 [dependencies]
-clap = { version = "4.2", features = ["derive"] }
-rpassword = "7.0"
 rand = "0.8"
 base64 = "0.21"
 aes-gcm = "0.10"
@@ -16,7 +14,3 @@ zeroize = "1.5"
 anyhow = "1.0"
 egui = "0.32"
 eframe = "0.32"
-
-
-[package.metadata.release]
-# optional
