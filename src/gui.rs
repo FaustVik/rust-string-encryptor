@@ -1,14 +1,12 @@
 use eframe::egui;
+use zeroize::Zeroize;
 use crate::{encrypt_text, decrypt_text};
 
 pub struct EncryptorApp {
-    // Encrypt section
     encrypt_input: String,
     encrypt_password: String,
     encrypt_output: String,
     encrypt_error: String,
-    
-    // Decrypt section
     decrypt_input: String,
     decrypt_password: String,
     decrypt_output: String,
@@ -27,6 +25,15 @@ impl Default for EncryptorApp {
             decrypt_output: String::new(),
             decrypt_error: String::new(),
         }
+    }
+}
+
+impl Drop for EncryptorApp {
+    fn drop(&mut self) {
+        self.encrypt_password.zeroize();
+        self.decrypt_password.zeroize();
+        self.encrypt_input.zeroize();
+        self.decrypt_output.zeroize();
     }
 }
 
@@ -93,7 +100,7 @@ impl EncryptorApp {
             );
             ui.add_space(5.0);
             if ui.button("📋 Copy to Clipboard").clicked() {
-                ui.output_mut(|o| o.copied_text = self.encrypt_output.clone());
+                ui.ctx().copy_text(self.encrypt_output.clone());
             }
         }
     }
@@ -163,7 +170,7 @@ impl EncryptorApp {
             );
             ui.add_space(5.0);
             if ui.button("📋 Copy to Clipboard").clicked() {
-                ui.output_mut(|o| o.copied_text = self.decrypt_output.clone());
+                ui.ctx().copy_text(self.decrypt_output.clone());
             }
         }
     }
