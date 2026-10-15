@@ -2,15 +2,23 @@
 name = "rust-string-encryptor"
 version = "0.1.0"
 edition = "2021"
-
+rust-version = "1.85"
+resolver = "3"
 
 [dependencies]
-rand = "0.8"
-base64 = "0.21"
-aes-gcm = "0.10"
-aead = "0.5"
-argon2 = "0.4"
-zeroize = "1.5"
-anyhow = "1.0"
+aes-gcm = "0.11"
+argon2 = "0.6"
+base64 = "0.23"
+getrandom = "0.4"
+zeroize = "1"
+anyhow = "1"
+arboard = { version = "3", default-features = false }
 egui = "0.32"
 eframe = "0.32"
+
+# Argon2 (64 MiB, t=3) is very slow unoptimized; keep debug runs and tests fast.
+[profile.dev.package.argon2]
+opt-level = 3
+
+[profile.dev.package.blake2]
+opt-level = 3
