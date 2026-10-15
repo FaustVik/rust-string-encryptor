@@ -11,7 +11,12 @@
 - **Обратная совместимость**: сообщения формата V1 по-прежнему расшифровываются
 - **Очистка памяти**: ключи через `Zeroizing`, пароли затираются в `Drop`
 
-## Установка
+## Скачать
+
+Готовый `.exe` для Windows — на странице [Releases](https://github.com/FaustVik/rust-string-encryptor/releases/latest).
+Рядом лежит файл `.sha256` для проверки целостности.
+
+## Сборка из исходников
 
 ```bash
 cargo build --release
@@ -42,6 +47,19 @@ cargo fmt --check
 
 Те же проверки и release-сборка запускаются в GitHub Actions (`.github/workflows/ci.yml`).
 Минимальная версия Rust — 1.85.
+
+### Релиз
+
+1. Поднять `version` в `Cargo.toml` и закоммитить в `master`.
+2. Создать и отправить тег с той же версией:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+Workflow `release.yml` проверит, что тег совпадает с версией в `Cargo.toml`,
+прогонит тесты, соберёт `.exe` и опубликует GitHub Release с автоописанием.
 
 ## Безопасность
 
